@@ -23,3 +23,9 @@ export function App() {
     );
 }
 
+
+function Efu() {
+    return (
+        <div>yrfgyrgfryf</div>
+    )
+}
