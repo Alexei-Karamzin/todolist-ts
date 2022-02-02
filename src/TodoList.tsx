@@ -5,7 +5,7 @@ type TodolistType = {
     tasks: Array<TasksType>
 }
 
-type TasksType = {
+export type TasksType = {
     id: number,
     title: string,
     isDone: boolean
