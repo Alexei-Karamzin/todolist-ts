@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useState, KeyboardEvent} from "react";
 import {FilterValueType} from "./App";
 
 type TodolistType = {
@@ -28,15 +28,19 @@ export const TodoList = (props: TodolistType) => {
         setTitle('')
     }
 
+    const onKeyPressHandler = (e:KeyboardEvent<HTMLInputElement>) => {
+        if (e.charCode === 13) {
+            addTaskOnClickHandler()
+        }
+    }
+
     return (
         <div>
             <h3>{props.title}</h3>
             <div>
                 <input
                     value={title}
-                    onKeyPress={e => {
-                        console.log(e.keyCode)
-                    }}
+                    onKeyPress={(e)=>onKeyPressHandler(e)}
                     onChange={(e) => onChangeInputHandler(e.currentTarget.value)}
                 />
                 <button onClick={addTaskOnClickHandler}>+</button>
