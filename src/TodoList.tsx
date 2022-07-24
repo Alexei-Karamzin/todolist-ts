@@ -2,12 +2,13 @@ import React, {useState, KeyboardEvent} from "react";
 import {FilterValueType} from "./App";
 
 type TodolistType = {
+    todolistId: string,
     title: string,
     tasks: Array<TasksType>
-    removeTask: (id: string) => void
-    changeFilter: (value: FilterValueType) => void
-    addTask: (title: string) => void
-    changeStatus: (id: string, isDone: boolean) => void
+    removeTask: (id: string, todolistId: string) => void
+    changeFilter: (value: FilterValueType, todolistId: string) => void
+    addTask: (title: string, todolistId: string) => void
+    changeStatus: (id: string, isDone: boolean, todolistId: string) => void
     filter: FilterValueType
 }
 
@@ -29,7 +30,7 @@ export const TodoList = (props: TodolistType) => {
 
     const addTaskOnClickHandler = () => {
         if (title.trim() !== ''){
-            props.addTask(title.trim())
+            props.addTask(title.trim(), props.todolistId)
             setTitle('')
         } else {
             setError('error')
@@ -42,8 +43,8 @@ export const TodoList = (props: TodolistType) => {
         }
     }
 
-    const onChangeCheckboxHandler = (id: string, isDone: boolean) => {
-        props.changeStatus(id,isDone)
+    const onChangeCheckboxHandler = (taskId: string, isDone: boolean, todolistId: string) => {
+        props.changeStatus(taskId,isDone,todolistId)
     }
 
     return (
@@ -65,25 +66,25 @@ export const TodoList = (props: TodolistType) => {
                         <input
                             type="checkbox"
                             checked={el.isDone}
-                            onChange={(e)=>onChangeCheckboxHandler(el.id,e.currentTarget.checked)}
+                            onChange={(e)=>onChangeCheckboxHandler(el.id,e.currentTarget.checked, props.todolistId)}
                         />
                         <span>{el.title}</span>
-                        <button onClick={() => props.removeTask(el.id)}>X</button>
+                        <button onClick={() => props.removeTask(el.id, props.todolistId)}>X</button>
                     </li>)
                 }
             </ul>
             <div>
                 <button
                     className={props.filter === "all" ? 'active-filter' : ''}
-                    onClick={() => props.changeFilter("all")}
+                    onClick={() => props.changeFilter("all", props.todolistId)}
                 >All</button>
                 <button
                     className={props.filter === "active" ? 'active-filter' : ''}
-                    onClick={() => props.changeFilter("active")}
+                    onClick={() => props.changeFilter("active", props.todolistId)}
                 >Active</button>
                 <button
                     className={props.filter === "completed" ? 'active-filter' : ''}
-                    onClick={() => props.changeFilter("completed")}
+                    onClick={() => props.changeFilter("completed", props.todolistId)}
                 >Completed</button>
             </div>
         </div>
