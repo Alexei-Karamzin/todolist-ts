@@ -19,8 +19,15 @@ export function App() {
     const addTask = (title: string) => {
         let newTask = {id: v1(), title, isDone: false}
         let newTasks = [newTask, ...tasks]
-
         setTasks(newTasks)
+    }
+
+    const changeStatus = (id: string, isDone: boolean) => {
+        let changeTask = tasks.find(t => t.id === id)
+        if (changeTask) {
+            changeTask.isDone = isDone
+        }
+        setTasks([...tasks])
     }
 
     const removeTask = (id: string) => {
@@ -48,6 +55,8 @@ export function App() {
                 removeTask={removeTask}
                 changeFilter={changeFilter}
                 addTask={addTask}
+                changeStatus={changeStatus}
+                filter={filter}
             />
             <Input title={'Train'}/>
         </div>
