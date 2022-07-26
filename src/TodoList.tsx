@@ -1,6 +1,7 @@
-import React, {useState, KeyboardEvent} from "react";
+import React, {useState} from "react";
 import {FilterValueType} from "./App";
 import {AddItemForm} from "./AddItemForm";
+import {EditableSpan} from "./EditebleSpan";
 
 type TodolistType = {
     todolistId: string
@@ -11,6 +12,8 @@ type TodolistType = {
     addTask: (title: string, todolistId: string) => void
     changeStatus: (id: string, isDone: boolean, todolistId: string) => void
     removeTodolist: (id: string) => void
+    changeTaskTitle: (todolistId: string, taskId: string, title: string) => void
+    onChangeTitle: (todolistId: string, title: string) => void
     filter: FilterValueType
 }
 
@@ -25,16 +28,6 @@ export const TodoList = (props: TodolistType) => {
     const [title, setTitle] = useState('')
     const [error, setError] = useState<string | null>(null)
 
-
-    const addTaskOnClickHandler = () => {
-        if (title.trim() !== '') {
-            props.addTask(title.trim(), props.todolistId)
-            setTitle('')
-        } else {
-            setError('error')
-        }
-    }
-
     const onChangeCheckboxHandler = (taskId: string, isDone: boolean, todolistId: string) => {
         props.changeStatus(taskId, isDone, todolistId)
     }
@@ -44,28 +37,43 @@ export const TodoList = (props: TodolistType) => {
     }
 
     const addTask = (title: string) => {
-        props.addTask(title,props.todolistId)
+        props.addTask(title, props.todolistId)
         console.log(title)
+    }
+
+    const onChangeTitleHandler = (title: string) => {
+        props.onChangeTitle(props.todolistId,title)
     }
 
     return (
         <div>
-            <h3>{props.title}</h3>
+            <h3>
+                <EditableSpan title={props.title} onChangeInputSpan={onChangeTitleHandler} />
+            </h3>
             <button onClick={() => removeTodolistHandler(props.todolistId)}>X</button>
             <AddItemForm
                 addItem={addTask}
             />
             <ul>
                 {
-                    props.tasks.map((el) => <li className={el.isDone ? 'isDone' : ''} key={el.id}>
-                        <input
-                            type="checkbox"
-                            checked={el.isDone}
-                            onChange={(e) => onChangeCheckboxHandler(el.id, e.currentTarget.checked, props.todolistId)}
-                        />
-                        <span>{el.title}</span>
-                        <button onClick={() => props.removeTask(el.id, props.todolistId)}>X</button>
-                    </li>)
+                    props.tasks.map((el) => {
+
+                        const onChangeTitleHandler = (title: string) => {
+                            props.changeTaskTitle(props.todolistId, el.id, title)
+                        }
+
+                        const removeTaskHandler = () => props.removeTask(el.id, props.todolistId)
+
+                        return <li className={el.isDone ? 'isDone' : ''} key={el.id}>
+                            <input
+                                type="checkbox"
+                                checked={el.isDone}
+                                onChange={(e) => onChangeCheckboxHandler(el.id, e.currentTarget.checked, props.todolistId)}
+                            />
+                            <EditableSpan title={el.title} onChangeInputSpan={onChangeTitleHandler}/>
+                            <button onClick={removeTaskHandler}>X</button>
+                        </li>
+                    })
                 }
             </ul>
             <div>
@@ -88,9 +96,6 @@ export const TodoList = (props: TodolistType) => {
         </div>
     )
 }
-
-
-
 
 
 // react-scripts --openssl-legacy-provider start
